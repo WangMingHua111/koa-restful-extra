@@ -74,8 +74,6 @@ export class JwtBearerAuthorization implements IAuthorization {
  */
 export function AddJwtBearerAuthentication(options: JwtBearerAuthorizationOptions | (() => JwtBearerAuthorizationOptions)) {
     const opts = typeof options === 'function' ? options() : options
-    const jwtBearer = new JwtBearerAuthorization(opts)
-    AddAuthentication(JwtBearerAuthorization.scheme, jwtBearer)
 
-    return jwtBearer
+    return AddAuthentication(JwtBearerAuthorization.scheme, new JwtBearerAuthorization(opts))
 }

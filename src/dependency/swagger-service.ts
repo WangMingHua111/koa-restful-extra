@@ -1,15 +1,9 @@
-import { CreateAST2OpenAPI } from '@wangminghua/koa-restful'
+import { AddController, CreateAST2OpenAPI, HttpGet } from '@wangminghua/koa-restful'
 
-/**
- * 生成sawgger 到 html
- * @param dir
- * @returns
- */
-export function swagger2html(dir = './**/*.ts') {
-    const openapi = CreateAST2OpenAPI(dir)
-    const parseStr = openapi.parse()
-
-    const html = `<!DOCTYPE html>
+class SwaggerController {
+    @HttpGet('')
+    index() {
+        return `<!DOCTYPE html>
 <html>
 <head>
   <title>Swagger UI</title>
@@ -24,7 +18,7 @@ export function swagger2html(dir = './**/*.ts') {
     window.onload = function() {
 
       const ui = SwaggerUIBundle({
-        spec: $spec,
+        url: '/swagger/json',
         dom_id: '#swagger-ui',
         presets: [
           SwaggerUIBundle.presets.apis,
@@ -35,18 +29,20 @@ export function swagger2html(dir = './**/*.ts') {
     }
   </script>
 </body>
-</html>`.replace('$spec', parseStr)
-
-    return html
+</html>`
+    }
+    @HttpGet()
+    async json(): Promise<any> {
+        const openapi = CreateAST2OpenAPI('./**/*.ts')
+        const parseStr = openapi.parse()
+        return JSON.parse(parseStr)
+    }
 }
 
 /**
- * 生成sawgger 到 json
- * @param dirs
+ * 添加内存缓存服务
  * @returns
  */
-export function swagger2json(dir = './**/*.ts') {
-    const openapi = CreateAST2OpenAPI(dir)
-    const parseStr = openapi.parse()
-    return JSON.parse(parseStr)
+export function AddSwaggerUI() {
+    AddController(SwaggerController, '/swagger')
 }

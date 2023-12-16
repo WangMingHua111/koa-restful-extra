@@ -74,7 +74,6 @@ export class CookiesAuthorization implements IAuthorization {
  */
 export function AddCookiesAuthentication(options: CookiesAuthorizationOptions | (() => CookiesAuthorizationOptions)) {
     const opts = typeof options === 'function' ? options() : options
-    const cookies = new CookiesAuthorization(opts)
-    AddAuthentication(CookiesAuthorization.scheme, cookies)
-    return cookies
+
+    return AddAuthentication(CookiesAuthorization.scheme, new CookiesAuthorization(opts))
 }
