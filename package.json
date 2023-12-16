@@ -1,0 +1,47 @@
+{
+    "name": "@wangminghua/koa-restful-extra",
+    "version": "0.0.1",
+    "description": "Koa Restful 拓展库",
+    "main": "./dist/index.js",
+    "types": "./dist/types/index.d.ts",
+    "scripts": {
+        "build": "rimraf -rf ./dist && npx tsc -p tsconfig.dist.json",
+        "run-example-ts": "ts-node ./src-example/simple.ts"
+    },
+    "files": [
+        "src",
+        "src-example",
+        "dist",
+        "package.json",
+        "tsconfig.json",
+        "tsconfig.dist.json",
+        "README.md"
+    ],
+    "author": "wangminghua",
+    "license": "ISC",
+    "dependencies": {
+        "@types/jsonwebtoken": "^9.0.5",
+        "@types/koa": "^2.13.11",
+        "@wangminghua/di": "^0.0.2",
+        "@wangminghua/koa-restful": "^1.0.0-alpha.3",
+        "jsonwebtoken": "^9.0.2",
+        "koa": "^2.14.2",
+        "typescript": "^5.2.2"
+    },
+    "devDependencies": {
+        "chalk": "^4.1.2",
+        "rimraf": "^5.0.5",
+        "ts-node": "^10.9.1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/WangMingHua111/koa-restful-extra.git"
+    },
+    "publishConfig": {
+        "access": "public",
+        "registry": "https://registry.npmjs.org/"
+    },
+    "engines": {
+        "node": ">=16"
+    }
+}
