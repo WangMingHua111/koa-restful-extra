@@ -1,6 +1,6 @@
 import { Authorize } from '@wangminghua/koa-restful'
 import { AuthorizationSchemes } from './../utils/share'
-export { AddCookiesAuthentication, CookiesAuthorization } from './cookie'
+export { AddCookieAuthentication, CookieAuthorization } from './cookie'
 export { AddJwtBearerAuthentication, JwtBearerAuthorization } from './jwt-bearer'
 
 /**

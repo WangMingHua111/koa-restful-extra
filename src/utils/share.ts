@@ -2,7 +2,7 @@ import os from 'node:os'
 /**
  * 授权模式
  */
-export type AuthorizationSchemes = 'Bearer' | 'Cookies' | 'OAuth'
+export type AuthorizationSchemes = 'Bearer' | 'Cookie' | 'OAuth'
 
 /**
  * 获取本机有效ip4地址

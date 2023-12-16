@@ -1,13 +1,15 @@
-import { AddAuthentication, IAuthorization } from '@wangminghua/koa-restful'
+import { AddAuthentication, AddDependency, IAuthorization } from '@wangminghua/koa-restful'
 import jwt, { JwtPayload, SignOptions, VerifyOptions } from 'jsonwebtoken'
 import { Context } from 'koa'
+import { OpenAPIV3 } from 'openapi-types'
 
+import { AddSecurityScheme } from '../utils/security-scheme'
 import { AuthorizationSchemes } from '../utils/share'
 
 /**
- * CookiesAuthorizationOptions
+ * CookieAuthorizationOptions
  */
-type CookiesAuthorizationOptions = {
+type CookieAuthorizationOptions = {
     /**
      * 鉴权头
      * @default 'x-accese-token'
@@ -37,13 +39,29 @@ type CookiesAuthorizationOptions = {
 /**
  * Cookie 身份认证方法
  */
-export class CookiesAuthorization implements IAuthorization {
-    public static readonly scheme: AuthorizationSchemes = 'Cookies'
-    options: CookiesAuthorizationOptions & { authorityHeader: string }
-    constructor(options: CookiesAuthorizationOptions) {
+export class CookieAuthorization implements IAuthorization {
+    public static readonly scheme: AuthorizationSchemes = 'Cookie'
+    options: CookieAuthorizationOptions & { authorityHeader: string }
+    constructor(options: CookieAuthorizationOptions) {
         this.options = {
             authorityHeader: 'x-accese-token',
             ...options,
+        }
+    }
+    /**
+     * authorityHeader
+     */
+    get authorityHeader(): string {
+        return this.options.authorityHeader
+    }
+    /**
+     * SecuritySchemeObject
+     */
+    get securitySchemeObject(): OpenAPIV3.SecuritySchemeObject {
+        return {
+            type: 'apiKey',
+            in: 'cookie',
+            name: this.options.authorityHeader,
         }
     }
     async hook(ctx: Context): Promise<boolean> {
@@ -73,10 +91,12 @@ export class CookiesAuthorization implements IAuthorization {
     }
 }
 /**
- * 添加 Cookies 身份认证方案
+ * 添加 Cookie 身份认证方案
  */
-export function AddCookiesAuthentication(options: CookiesAuthorizationOptions | (() => CookiesAuthorizationOptions)) {
+export function AddCookieAuthentication(options: CookieAuthorizationOptions | (() => CookieAuthorizationOptions)) {
     const opts = typeof options === 'function' ? options() : options
-
-    return AddAuthentication(CookiesAuthorization.scheme, new CookiesAuthorization(opts))
+    const authorization = new CookieAuthorization(opts)
+    AddSecurityScheme(CookieAuthorization.scheme, authorization.securitySchemeObject)
+    AddDependency(authorization)
+    return AddAuthentication(CookieAuthorization.scheme, authorization)
 }

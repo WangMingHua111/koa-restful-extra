@@ -1,7 +1,8 @@
 import { AddController, CacheService, CreateAST2OpenAPI, HttpGet, Injection } from '@wangminghua/koa-restful'
-
+import { SimpleAuthorize } from '../authorization'
+import { securitySchemes } from '../utils/security-scheme'
 class SwaggerController {
-    static swaggerDir: string = 'src/**/*.ts'
+    static openapi: ReturnType<typeof CreateAST2OpenAPI>
 
     @Injection()
     cache?: CacheService
@@ -39,7 +40,8 @@ class SwaggerController {
     @HttpGet()
     async json(): Promise<any> {
         const read = () => {
-            const openapi = CreateAST2OpenAPI(SwaggerController.swaggerDir)
+            const openapi = SwaggerController.openapi
+
             const parseStr = openapi.parse()
             return JSON.parse(parseStr)
         }
@@ -52,12 +54,24 @@ class SwaggerController {
         }
     }
 }
+type ArgsType = Parameters<typeof CreateAST2OpenAPI>
 
 /**
  * 添加SwaggerUI
  * @param swaggerDir 控制器扫描目录，默认值
  */
-export function AddSwaggerUI(swaggerDir: string = 'src/**/*.ts') {
-    SwaggerController.swaggerDir = swaggerDir
+export function AddSwaggerUI(...args: ArgsType) {
+    const openapi = CreateAST2OpenAPI(...args)
+
+    // 添加 SimpleAuthorize 支持输出路由授权
+    openapi.addAuthorizeDecoratorName(SimpleAuthorize.name)
+
+    // 添加授权模式
+    for (const authorizationScheme in securitySchemes) {
+        openapi.addSecurityScheme(authorizationScheme, securitySchemes[authorizationScheme])
+    }
     AddController(SwaggerController, '/swagger', { prefix: '' })
+    SwaggerController.openapi = openapi
+
+    return openapi
 }

@@ -1,7 +1,9 @@
-import { AddAuthentication, IAuthorization } from '@wangminghua/koa-restful'
+import { AddAuthentication, AddDependency, IAuthorization } from '@wangminghua/koa-restful'
 import jwt, { JwtPayload, SignOptions, VerifyOptions } from 'jsonwebtoken'
 import { Context } from 'koa'
+import { OpenAPIV3 } from 'openapi-types'
 
+import { AddSecurityScheme } from '../utils/security-scheme'
 import { AuthorizationSchemes } from '../utils/share'
 
 /**
@@ -39,11 +41,28 @@ type JwtBearerAuthorizationOptions = {
  */
 export class JwtBearerAuthorization implements IAuthorization {
     public static readonly scheme: AuthorizationSchemes = 'Bearer'
+
     options: JwtBearerAuthorizationOptions & { authorityHeader: string }
     constructor(options: JwtBearerAuthorizationOptions) {
         this.options = {
             authorityHeader: 'Authorization',
             ...options,
+        }
+    }
+    /**
+     * authorityHeader
+     */
+    get authorityHeader(): string {
+        return this.options.authorityHeader
+    }
+    /**
+     * SecuritySchemeObject
+     */
+    get securitySchemeObject(): OpenAPIV3.SecuritySchemeObject {
+        return {
+            type: 'apiKey',
+            in: 'header',
+            name: this.options.authorityHeader,
         }
     }
     async hook(ctx: Context): Promise<boolean> {
@@ -77,6 +96,8 @@ export class JwtBearerAuthorization implements IAuthorization {
  */
 export function AddJwtBearerAuthentication(options: JwtBearerAuthorizationOptions | (() => JwtBearerAuthorizationOptions)) {
     const opts = typeof options === 'function' ? options() : options
-
-    return AddAuthentication(JwtBearerAuthorization.scheme, new JwtBearerAuthorization(opts))
+    const authorization = new JwtBearerAuthorization(opts)
+    AddSecurityScheme(JwtBearerAuthorization.scheme, authorization.securitySchemeObject)
+    AddDependency(authorization)
+    return AddAuthentication(JwtBearerAuthorization.scheme, authorization)
 }
