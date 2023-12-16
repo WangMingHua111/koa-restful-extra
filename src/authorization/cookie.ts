@@ -39,12 +39,15 @@ type CookiesAuthorizationOptions = {
  */
 export class CookiesAuthorization implements IAuthorization {
     public static readonly scheme: AuthorizationSchemes = 'Cookies'
-    options: CookiesAuthorizationOptions
+    options: CookiesAuthorizationOptions & { authorityHeader: string }
     constructor(options: CookiesAuthorizationOptions) {
-        this.options = options
+        this.options = {
+            authorityHeader: 'x-accese-token',
+            ...options,
+        }
     }
     async hook(ctx: Context): Promise<boolean> {
-        const { authorityHeader = 'x-accese-token' } = this.options
+        const { authorityHeader } = this.options
         const token = ctx.cookies.get(authorityHeader)
         if (!token) return false
         try {

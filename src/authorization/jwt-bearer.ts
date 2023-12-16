@@ -39,12 +39,15 @@ type JwtBearerAuthorizationOptions = {
  */
 export class JwtBearerAuthorization implements IAuthorization {
     public static readonly scheme: AuthorizationSchemes = 'Bearer'
-    options: JwtBearerAuthorizationOptions
+    options: JwtBearerAuthorizationOptions & { authorityHeader: string }
     constructor(options: JwtBearerAuthorizationOptions) {
-        this.options = options
+        this.options = {
+            authorityHeader: 'Authorization',
+            ...options,
+        }
     }
     async hook(ctx: Context): Promise<boolean> {
-        const { authorityHeader = 'Authorization' } = this.options
+        const { authorityHeader } = this.options
         const token = ctx.get(authorityHeader)
         if (!token) return false
         try {
