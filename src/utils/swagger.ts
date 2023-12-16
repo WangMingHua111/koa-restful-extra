@@ -5,7 +5,7 @@ import { CreateAST2OpenAPI } from '@wangminghua/koa-restful'
  * @param dir
  * @returns
  */
-export function swagger2html(dir = './**/*.ts') {
+export function swagger2html(dir = 'src/**/*.ts') {
     const openapi = CreateAST2OpenAPI(dir)
     const parseStr = openapi.parse()
 
@@ -45,7 +45,7 @@ export function swagger2html(dir = './**/*.ts') {
  * @param dirs
  * @returns
  */
-export function swagger2json(dir = './**/*.ts') {
+export function swagger2json(dir = 'src/**/*.ts') {
     const openapi = CreateAST2OpenAPI(dir)
     const parseStr = openapi.parse()
     return JSON.parse(parseStr)

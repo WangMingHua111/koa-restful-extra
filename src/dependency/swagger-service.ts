@@ -1,6 +1,11 @@
-import { AddController, CreateAST2OpenAPI, HttpGet } from '@wangminghua/koa-restful'
+import { AddController, CacheService, CreateAST2OpenAPI, HttpGet, Injection } from '@wangminghua/koa-restful'
 
 class SwaggerController {
+    static swaggerDir: string = 'src/**/*.ts'
+
+    @Injection()
+    cache?: CacheService
+
     @HttpGet('')
     index() {
         return `<!DOCTYPE html>
@@ -33,16 +38,26 @@ class SwaggerController {
     }
     @HttpGet()
     async json(): Promise<any> {
-        const openapi = CreateAST2OpenAPI('./**/*.ts')
-        const parseStr = openapi.parse()
-        return JSON.parse(parseStr)
+        const read = () => {
+            const openapi = CreateAST2OpenAPI(SwaggerController.swaggerDir)
+            const parseStr = openapi.parse()
+            return JSON.parse(parseStr)
+        }
+        if (this.cache) {
+            return await this.cache.get(`sys:${SwaggerController.name}:json`, async () => {
+                return read()
+            })
+        } else {
+            return read()
+        }
     }
 }
 
 /**
- * 添加内存缓存服务
- * @returns
+ * 添加SwaggerUI
+ * @param swaggerDir 控制器扫描目录，默认值
  */
-export function AddSwaggerUI() {
-    AddController(SwaggerController, '/swagger')
+export function AddSwaggerUI(swaggerDir: string = 'src/**/*.ts') {
+    SwaggerController.swaggerDir = swaggerDir
+    AddController(SwaggerController, '/swagger', { prefix: '' })
 }

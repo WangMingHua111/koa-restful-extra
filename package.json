@@ -1,6 +1,6 @@
 {
     "name": "@wangminghua/koa-restful-extra",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "Koa Restful 拓展库",
     "main": "./dist/index.js",
     "types": "./dist/types/index.d.ts",
