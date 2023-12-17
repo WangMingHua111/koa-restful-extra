@@ -1,6 +1,6 @@
 {
     "name": "@wangminghua/koa-restful-extra",
-    "version": "0.0.5",
+    "version": "0.0.6",
     "description": "Koa Restful 拓展库",
     "main": "./dist/index.js",
     "types": "./dist/types/index.d.ts",
@@ -23,7 +23,7 @@
         "@types/jsonwebtoken": "^9.0.5",
         "@types/koa": "^2.13.11",
         "@wangminghua/di": "^0.0.2",
-        "@wangminghua/koa-restful": "^1.0.2",
+        "@wangminghua/koa-restful": "^1.0.6",
         "jsonwebtoken": "^9.0.2",
         "koa": "^2.14.2",
         "openapi-types": "^12.1.3",
